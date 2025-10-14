@@ -1,32 +1,30 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
-
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @TeleOp
-public class Servotest extends LinearOpMode {
-    private CRServo frontLeftServo;
-    private CRServo backLeftServo;
-    private CRServo frontRightServo;
-    private CRServo backRightServo;
-
-
-
+public class FTCDriveTrain extends LinearOpMode {
     @Override
-    public void runOpMode() {
-        frontLeftServo = hardwareMap.get(CRServo.class, "servo");
-        backLeftServo = hardwareMap.get(CRServo.class, "servo2");
-        frontRightServo = hardwareMap.get(CRServo.class, "servo3");
-        backRightServo = hardwareMap.get(CRServo.class, "servo4");
+    public void runOpMode() throws InterruptedException {
+        // Declare our motors
+        // Make sure your ID's match your configuration
+        DcMotor frontLeftMotor = hardwareMap.dcMotor.get("frontLeftMotor");
+        DcMotor backLeftMotor = hardwareMap.dcMotor.get("backLeftMotor");
+        DcMotor frontRightMotor = hardwareMap.dcMotor.get("frontRightMotor");
+        DcMotor backRightMotor = hardwareMap.dcMotor.get("backRightMotor");
 
-        frontRightServo.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRightServo.setDirection(DcMotorSimple.Direction.REVERSE);
+        // Reverse the right side motors. This may be wrong for your setup.
+        // If your robot moves backwards when commanded to go forwards,
+        // reverse the left side instead.
+        // See the note about this earlier on this page.
+        frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Retrieve the IMU from the hardware map
         IMU imu = hardwareMap.get(IMU.class, "imu");
@@ -61,7 +59,7 @@ public class Servotest extends LinearOpMode {
 
             rotX = rotX * 1.1;  // Counteract imperfect strafing
 
-            // Denominator is the largest servo power (absolute value) or 1
+            // Denominator is the largest motor power (absolute value) or 1
             // This ensures all the powers maintain the same ratio,
             // but only if at least one is out of the range [-1, 1]
             double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
@@ -70,11 +68,12 @@ public class Servotest extends LinearOpMode {
             double frontRightPower = (rotY - rotX - rx) / denominator;
             double backRightPower = (rotY + rotX - rx) / denominator;
 
-            frontLeftServo.setPower(frontLeftPower);
-            backLeftServo.setPower(backLeftPower);
-            frontRightServo.setPower(frontRightPower);
-            backRightServo.setPower(backRightPower);
+            frontLeftMotor.setPower(frontLeftPower);
+            backLeftMotor.setPower(backLeftPower);
+            frontRightMotor.setPower(frontRightPower);
+            backRightMotor.setPower(backRightPower);
         }
     }
 }
+
 
